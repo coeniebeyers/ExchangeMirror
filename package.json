@@ -1,0 +1,32 @@
+{
+  "name": "exchange-mirror",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node_modules/.bin/grunt ci"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com//exchange-mirror"
+  },
+  "keywords": [],
+  "author": "Coenie <coeniebeyers@gmail.com>",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com//exchange-mirror/issues"
+  },
+  "dependencies": {
+    "bitmex-websocket": "0.0.6",
+    "ws": "^1.1.1"
+  },
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt": "^0.4.5",
+    "grunt-mocha-cli": "^2.0.0",
+    "grunt-complexity": "^0.3.0",
+    "grunt-cli": "^0.1.13"
+  }
+}
