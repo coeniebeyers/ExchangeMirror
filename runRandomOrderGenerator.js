@@ -124,7 +124,7 @@ function createNewOrders(){
         }
       });
     }
-  }, 10);  
+  }, 100);  
 }
 
 function createCancelOrders(){
@@ -134,7 +134,7 @@ function createCancelOrders(){
         events.emit('newOrder', order);
       });
     }
-  }, 10);
+  }, 100);
 }
 
 
