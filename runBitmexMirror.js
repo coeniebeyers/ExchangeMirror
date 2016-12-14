@@ -4,6 +4,7 @@ var events = require('./eventEmitter.js');
 
 var orderBook = [];
 var operations = 0;
+var account = null;
 
 var options = {
   host: 'localhost',
@@ -27,7 +28,7 @@ events.on('submitOrder', function(order){
   //console.log('submitOrder:', order);
   path += 'timestamp='+new Date().getTime();
   path += '&id='+order.id;
-  path += '&accountId='+'0';
+  path += '&accountId='+account.id;
   if(order.side == 'Sell'){
     path += '&type='+'ask';
   } else {
@@ -46,7 +47,7 @@ events.on('cancelOrder', function(order){
   //console.log('submitOrder:', order);
   path += 'timestamp='+new Date().getTime();
   path += '&id='+order.id;
-  path += '&accountId='+'0';
+  path += '&accountId='+account.id;
   if(order.side == 'Sell'){
     path += '&type='+'cancelask';
   } else {
@@ -65,7 +66,7 @@ events.on('updateOrder', function(order){
   //console.log('submitOrder:', order);
   path += 'timestamp='+new Date().getTime();
   path += '&id='+order.id;
-  path += '&accountId='+'0';
+  path += '&accountId='+account.id;
   if(order.side == 'Sell'){
     path += '&type='+'updateask';
   } else {
@@ -149,7 +150,32 @@ events.on('newMessage', function(message){
   } 
 });
 
+function getAccountId(cb){
+  var path = '/createNewAccount'
+  options.path = path;
+  http.request(options, function(response) {
+    var str = '';
+
+    response.on('data', function (chunk) {
+      str += chunk;
+    });
+
+    response.on('end', function () {
+      var account_ = JSON.parse(str);
+      cb(account_);
+    });
+  }).end();
+}
+
 function run(){
+  // GetAccount id
+  if(!account){
+    getAccountId(function(account_){
+      account = account_;
+      console.log(account);
+    });  
+  }
+  
   var connString = 'wss://www.bitmex.com/realtime?';
   var params = 'subscribe=trade:XBTUSD,orderBookL2:XBTUSD';
   var websocket = new WebSocket(connString+params);
@@ -165,7 +191,7 @@ function run(){
   setInterval(function(){
     var currTime = new Date().getTime();
     console.log('Ops:', (operations/(currTime-startTime)*1000).toFixed(2));
-  }, 2000);  
+  }, 2000);
 }
 
 run();
