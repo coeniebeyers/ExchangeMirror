@@ -150,6 +150,23 @@ events.on('newMessage', function(message){
   } 
 });
 
+function getBalances(accountId, cb){
+  var path = '/getBalance?accountId='+accountId
+  options.path = path;
+  http.request(options, function(response) {
+    var str = '';
+
+    response.on('data', function (chunk) {
+      str += chunk;
+    });
+
+    response.on('end', function () {
+      var balances = JSON.parse(str);
+      cb(balances);
+    });
+  }).end();
+}
+
 function getAccountId(cb){
   var path = '/createNewAccount'
   options.path = path;
@@ -167,14 +184,57 @@ function getAccountId(cb){
   }).end();
 }
 
+function adjustBalance(obj, cb){
+  var path = '/adjustAccountBalance';
+  path += '?accountId='+obj.accountId;
+  path += '&amount='+obj.amount;
+  path += '&currency='+obj.currency;
+  options.path = path;
+  http.request(options, function(response) {
+    var str = '';
+
+    response.on('data', function (chunk) {
+      str += chunk;
+    });
+
+    response.on('end', function () {
+      var balances = JSON.parse(str);
+      cb(balances);
+    });
+  }).end();
+}
+
 function run(){
   // GetAccount id
   if(!account){
     getAccountId(function(account_){
       account = account_;
       console.log(account);
+      getBalances(account.id, function(balances){
+        if(balances.BTC < 1000){
+          var obj = {
+            accountId: account.id,
+            amount: 1000,
+            currency: 'BTC'
+          }
+          adjustBalance(obj, function(res){
+            console.log(res);
+          });
+        } 
+        if (balances.USD < 1000){
+          var obj = {
+            accountId: account.id,
+            amount: 1000,
+            currency: 'USD'
+          }
+          adjustBalance(obj, function(res){
+            console.log(res);
+          });
+        } 
+      });
     });  
   }
+  
   
   var connString = 'wss://www.bitmex.com/realtime?';
   var params = 'subscribe=trade:XBTUSD,orderBookL2:XBTUSD';
@@ -191,6 +251,9 @@ function run(){
   setInterval(function(){
     var currTime = new Date().getTime();
     console.log('Ops:', (operations/(currTime-startTime)*1000).toFixed(2));
+    getBalances(account.id, function(balances){
+      console.log('Balances:', balances);
+    });
   }, 2000);
 }
 
