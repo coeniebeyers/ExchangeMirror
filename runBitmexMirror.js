@@ -233,6 +233,29 @@ function run(){
         } 
       });
     });  
+  } else {
+    getBalances(account.id, function(balances){
+      if(balances.BTC < 1000){
+        var obj = {
+          accountId: account.id,
+          amount: 1000,
+          currency: 'BTC'
+        }
+        adjustBalance(obj, function(res){
+          console.log(res);
+        });
+      } 
+      if (balances.USD < 1000){
+        var obj = {
+          accountId: account.id,
+          amount: 1000,
+          currency: 'USD'
+        }
+        adjustBalance(obj, function(res){
+          console.log(res);
+        });
+      } 
+    });
   }
   
   

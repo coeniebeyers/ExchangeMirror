@@ -4,15 +4,19 @@ var http = require('http');
 var events = require('./eventEmitter.js');
 
 var operations = 0;
-var accountId = 0;
+var accountId = '58774677cd7cf607521df629';
 var orderList = [];
 
 var options = {
   host: 'localhost',
   port: 3033,
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json'
+  }
 };
 
-callback = function(response) {
+var callback = function(response) {
   /*var str = '';
 
   response.on('data', function (chunk) {
@@ -27,6 +31,11 @@ callback = function(response) {
     console.log('ERROR:', err);
   });
 };
+
+process.on('uncaughtException', function (err) {
+  console.error(err.stack);
+  console.log("Node NOT Exiting...");
+});
 
 events.on('newOrder', function(order){
   var path = '/submitOrder?'
@@ -124,7 +133,7 @@ function createNewOrders(){
         }
       });
     }
-  }, 100);  
+  }, 1);  
 }
 
 function createCancelOrders(){
@@ -134,7 +143,7 @@ function createCancelOrders(){
         events.emit('newOrder', order);
       });
     }
-  }, 100);
+  }, 10);
 }
 
 
